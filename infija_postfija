@@ -1,0 +1,92 @@
+# Define a simple Stack (Pila) class locally
+class Pila:
+    def __init__(self):
+        self.items = []
+    
+    def push(self, item):
+        self.items.append(item)
+    
+    def pop(self):
+        return self.items.pop() if not self.esta_vacia() else None
+    
+    def peek(self):
+        return self.items[-1] if not self.esta_vacia() else None
+    
+    def esta_vacia(self):
+        return len(self.items) == 0
+
+def infija_a_postfija(expresion):
+    """
+    Convierte una expresión infija a postfija usando algoritmo de Shunting Yard.
+    
+    REGLAS:
+    1. Si token es NÚMERO → salida
+    2. Si token es OPERADOR:
+       - Mientras pila no vacía Y tope es operador Y precedencia(tope) >= precedencia(token)
+         → POP de pila a salida
+       - PUSH token a pila
+    3. Si token es '(' → PUSH a pila
+    4. Si token es ')' → POP hasta encontrar '(' (descarta paréntesis)
+    5. Al final → POP todos de pila a salida
+    """
+    
+    # INICIALIZACIÓN
+    pila = Pila()
+    salida = []
+    precedencia = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
+    
+    # TOKENIZACIÓN - dividir expresión en tokens
+    tokens = expresion.replace(" ", "").replace("(", " ( ").replace(")", " ) ").split()
+    
+    # PROCESAR CADA TOKEN
+    for token in tokens:
+        print(f"\nProcesando token: '{token}'")
+        
+        # REGLA 1: Si es NÚMERO → salida
+        if token.isdigit() or (token.count('.') == 1 and token.replace('.', '').isdigit()):
+            salida.append(token)
+            print(f"Token '{token}' es un número, se agrega a salida")
+        
+        # REGLA 2: Si es OPERADOR
+        elif token in precedencia:
+            while(not pila.esta_vacia() and
+                  pila.peek() != '(' and
+                  pila.peek() in precedencia and
+                  precedencia[pila.peek()] >= precedencia[token]):
+                salida.append(pila.pop())
+            pila.push(token)
+            print(f"Token '{token}' es un operador, se apila: push {token}")
+        
+        # REGLA 3: Si es '(' → PUSH a pila
+        elif token == '(':
+            pila.push(token)
+            print(f"Token '(' abierto, se apila")
+        
+        # REGLA 4: Si es ')' → POP hasta encontrar '('
+        elif token == ')':
+            while not pila.esta_vacia() and pila.peek() != '(':
+                salida.append(pila.pop())
+            if not pila.esta_vacia():
+                pila.pop()  # Descarta el '('
+            print(f"Token ')' cerrado, se desapilan hasta '('")
+        
+        print(f"Salida actual: {salida}")
+        print(f"Pila actual: {list(pila.items) if hasattr(pila, 'items') else 'N/A'}")
+    
+    # REGLA 5: Al finalizar la expresión, vaciamos la pila
+    print("\n*** VACIANDO PILA FINAL ***")
+    while not pila.esta_vacia():
+        salida.append(pila.pop())
+        print(f"Salida: {salida}")
+        print(f"Pila: {list(pila.items) if hasattr(pila, 'items') else 'N/A'}")
+    
+    return ' '.join(salida)
+
+
+# PRUEBA
+if __name__ == "__main__":
+    expresion = "3 + 4 * 2 / ( 1 - 5 ) ^ 2"
+    resultado = infija_a_postfija(expresion)
+    print(f"\n{'='*50}")
+    print(f"Expresión infija: {expresion}")
+    print(f"Expresión postfija: {resultado}")
