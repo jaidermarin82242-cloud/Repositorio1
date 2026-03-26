@@ -1,0 +1,51 @@
+import re 
+#expresiones regulares:
+texto = "gato, geto, gito, goto, gutu"
+resultado = re.findall(r'g.to', texto)
+print(("patron 'g.to:", resultado))
+
+#Cuantificadores:
+#?: el elemento anterior es opcional (puede aparecer 0 o 1 vez)
+#*: el elemento anterior puede aparecer 0 o más veces
+#+: el elemento anterior debe aparecer al menos una vez (1 o más veces)
+
+texto = "ac abc abbc abbbc"
+resultado = re.findall(r'ab?c', texto) # 'b' es opcional
+print("patron 'ab?c':", resultado)  
+
+resultado = re.findall(r'ab{2,3}c', texto) # 'b' es opcional
+print("patron 'ab{2,3}c':", resultado) 
+
+resultado = re.findall(r'a la (A, Z) c,',texto) # 'b' es opcional
+print("patron 'ab?c':", resultado) 
+
+resultado = re.findall(r"a\d + c", texto) # para que me de los numeros del 0 al 9, el \d es para los digitos y el + es para que me de uno o mas digitos
+print("patron 'ab?c':", resultado) 
+
+#^: indica el inicio de 2la cadena
+#$: indica el final de la cadena
+
+#Expresion regular para evaluar la placa de un carro, que tiene el formato ABC-1234
+def validar_placa(placa):
+    patron = r'^[A-Z]{3}-\d{4}$' 
+    if re.findall(patron, placa):
+        return True
+    return False
+
+
+texto= "El precio es de $100.000 $ (cien dolares)"
+resultado = re.search(r"\100\.00",texto)
+print(bool(resultado)) 
+#para encontrar todo lo que este entre el parentesis.
+resultado = re.search(r"\(.+\)",texto)
+print(bool(resultado))
+
+
+texto = "3004005000"
+resultado = re.search(r"(^3\d{2})(-\s)?(\d{3})(-\s)?(\d{2})(-\s)?(\d{2})$", texto)
+print("patron '\\d{3}':", resultado)
+
+#validar un correo electronico
+texto = "usuario1234@dominio.com"
+patron = r'^[a-zA-Z._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+print(bool(re.search(patron, texto)))

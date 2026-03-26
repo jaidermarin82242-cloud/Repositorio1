@@ -1,0 +1,43 @@
+import heapq
+
+#Reto 1:
+#Programa que registre pacientes
+#cada paciente tiene prioridad de 1 a 3, 1 es la importante
+#las personas del hospital deben de saber quien es el siguiente en atender
+#e indicar su nombre y prioridad con el heap.
+# Vector para almacenar los pacientes
+pacientes = []
+
+def agregar_paciente(nombre, prioridad):
+    """Agregar un paciente a la cola de prioridad"""
+    heapq.heappush(pacientes, (prioridad, nombre))
+
+def proximo_paciente():
+    """Obtener el siguiente paciente a atender"""
+    if pacientes:
+        prioridad, nombre = heapq.heappop(pacientes)
+        return nombre, prioridad
+    return None
+
+def mostrar_proximos(n=3):
+    """Mostrar los próximos n pacientes sin removerlos"""
+    if not pacientes:
+        print("No hay pacientes en la cola")
+        return
+    proximos = sorted(pacientes)[:n]
+    for prioridad, nombre in proximos:
+        print(f"Paciente: {nombre}, Prioridad: {prioridad}")
+
+# Ejemplo de uso
+agregar_paciente("Juan", 2)
+agregar_paciente("María", 1)
+agregar_paciente("Carlos", 3)
+agregar_paciente("Ana", 1)
+
+print("Próximos pacientes a atender:")
+mostrar_proximos()
+
+print("\nAtendiendo pacientes:")
+while pacientes:
+    nombre, prioridad = proximo_paciente()
+    print(f"Atendiendo a {nombre} (Prioridad: {prioridad})")

@@ -1,0 +1,41 @@
+##Reto 2
+#un programa que me permita programar tareas y me diga
+#cual es la siguiente tarea a realizar segun calendario
+##
+import datetime  
+import heapq
+from datetime import datetime, timedelta
+class Task:
+    def __init__(self, name, due_date):
+        self.name = name
+        self.due_date = datetime.strptime(due_date, "%Y-%m-%d %H:%M")
+    
+    def __lt__(self, other):
+        return self.due_date < other.due_date
+    
+    def __repr__(self):
+        return f"Task({self.name}, {self.due_date})"
+
+class TaskScheduler:
+    def __init__(self):
+        self.tasks = []
+    
+    def add_task(self, name, due_date):
+        task = Task(name, due_date)
+        heapq.heappush(self.tasks, task)
+    
+    def next_task(self):
+        if self.tasks:
+            return heapq.heappop(self.tasks)
+        return None
+    
+    def view_all_tasks(self):
+        return sorted(self.tasks)
+
+# Example usage
+scheduler = TaskScheduler()
+scheduler.add_task("Comprar comida", "2024-01-15 10:30")
+scheduler.add_task("Reunión importante", "2024-01-10 14:00")
+scheduler.add_task("Entregar proyecto", "2024-01-20 18:00")
+
+print("Próxima tarea:", scheduler.next_task())

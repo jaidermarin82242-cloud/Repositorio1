@@ -1,0 +1,62 @@
+import heapq
+import time
+
+# Heap donde se guardan los jugadores en espera
+cola_jugadores = []
+
+def agregar_jugador(id_jugador, nivel):
+    """
+    Agrega un jugador a la cola de espera.
+    Guardamos:
+    (tiempo, id, nivel)
+    """
+    
+    tiempo_llegada = time.time()  
+    # time.time() devuelve el momento exacto en segundos
+    # lo usamos para saber quien llegó primero
+    
+    heapq.heappush(cola_jugadores, (tiempo_llegada, id_jugador, nivel))
+    print(f"Jugador {id_jugador} agregado a la cola con nivel {nivel}")
+
+def buscar_partida():
+    """
+    Busca dos jugadores cuyo nivel tenga diferencia <=150
+    Si los encuentra los empareja.
+    Si no, los deja en la cola.
+    """
+    
+    if len(cola_jugadores) < 2:
+        print("No hay suficientes jugadores para emparejar")
+        return None
+
+    # Sacamos temporalmente todos los jugadores
+    jugadores_temp = []
+    
+    while cola_jugadores:
+        jugadores_temp.append(heapq.heappop(cola_jugadores))
+
+    # Buscar pareja válida
+    for i in range(len(jugadores_temp)):
+        tiempo1, id1, nivel1 = jugadores_temp[i]
+
+        for j in range(i+1, len(jugadores_temp)):
+            tiempo2, id2, nivel2 = jugadores_temp[j]
+
+            diferencia = abs(nivel1 - nivel2)
+
+            if diferencia <= 150:
+                print(f"Partida encontrada: {id1} (nivel {nivel1}) vs {id2} (nivel {nivel2})")
+
+                # Volvemos a meter los que no jugaron al heap
+                for k in range(len(jugadores_temp)):
+                    if k != i and k != j:
+                        heapq.heappush(cola_jugadores, jugadores_temp[k])
+
+                return (id1, id2)
+
+    # Si no encontramos pareja, volvemos a meter todos al heap
+    for jugador in jugadores_temp:
+        heapq.heappush(cola_jugadores, jugador)
+
+    print("No se encontró pareja compatible")
+    return None
